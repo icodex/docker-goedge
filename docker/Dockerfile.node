@@ -1,0 +1,17 @@
+FROM alpine:latest
+LABEL maintainer="icodex@msn.com"
+ENV TZ "Asia/Shanghai"
+ENV ROOT_DIR /usr/local/goedge
+
+ARG VERSION
+ENV VERSION=${VERSION}
+
+COPY build /build/
+
+RUN /build/base.sh \
+    && /build/install.sh node
+
+EXPOSE 80 443
+
+WORKDIR /usr/local/goedge
+ENTRYPOINT [ "/usr/local/goedge/run.sh" ]

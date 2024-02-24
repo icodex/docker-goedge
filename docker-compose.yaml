@@ -1,0 +1,47 @@
+version: "3"
+
+networks:
+  goedge:
+    external: false
+
+services:
+  mysqld:
+    image: mysql:${MYSQL_VERSION}
+    container_name: mysqld
+    env_file:
+      - .env
+    networks:
+      - goedge
+    volumes:
+      - ./data/db/mysql:/var/lib/mysql:rw
+    restart: always
+
+  edge-admin:
+    image: icodex/edge-admin:${VERSION}
+    container_name: edge-admin
+    ports:
+      - 7788:7788/tcp
+      - 8001:8001/tcp
+    env_file:
+      - .env
+    networks:
+      - goedge
+    volumes:
+      - ./data/edge-admin/configs:/usr/local/goedge/edge-admin/configs
+      - ./data/edge-api/configs:/usr/local/goedge/edge-admin/edge-api/configs
+    restart: always
+
+  edge-node:
+    image: icodex/edge-node:${VERSION}
+    container_name: edge-node
+    ports:
+      - 80:80/tcp
+      - 443:443/tcp
+    env_file:
+      - .env
+    networks:
+      - goedge
+    volumes:
+      - ./data/edge-node/cache:/opt/cache
+      - ./data/edge-node/configs:/usr/local/goedge/edge-node/configs
+    restart: always
