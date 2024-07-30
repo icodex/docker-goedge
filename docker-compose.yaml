@@ -1,5 +1,3 @@
-version: "3"
-
 networks:
   goedge:
     external: false
@@ -12,6 +10,8 @@ services:
       - .env
     networks:
       - goedge
+    command:
+      - '--skip-log-bin'
     volumes:
       - ./data/db/mysql:/var/lib/mysql:rw
     restart: always
@@ -22,26 +22,81 @@ services:
     ports:
       - 7788:7788/tcp
       - 8001:8001/tcp
-    env_file:
-      - .env
     networks:
       - goedge
     volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
       - ./data/edge-admin/configs:/usr/local/goedge/edge-admin/configs
       - ./data/edge-api/configs:/usr/local/goedge/edge-admin/edge-api/configs
     restart: always
+    depends_on:
+      - mysqld
+
+  edge-user:
+    image: icodex/edge-user:${VERSION}
+    container_name: edge-user
+    environment:
+      - ENDPOINTS=http://xxx.com:8001
+      - NODEID=xxx
+      - SECRET=xxx
+    ports:
+      - 8080:80/tcp
+    networks:
+      - goedge
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./data/edge-user/configs:/usr/local/goedge/edge-user/configs
+    restart: always
+    depends_on:
+      - edge-admin
+      - mysqld
 
   edge-node:
     image: icodex/edge-node:${VERSION}
     container_name: edge-node
+    environment:
+      - ENDPOINTS=http://xxx.com:8001
+      - CLUSTERID=xxx
+      - SECRET=xxx
     ports:
       - 80:80/tcp
       - 443:443/tcp
-    env_file:
-      - .env
     networks:
       - goedge
+    cap_add:
+      - NET_ADMIN
     volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
       - ./data/edge-node/cache:/opt/cache
       - ./data/edge-node/configs:/usr/local/goedge/edge-node/configs
     restart: always
+    depends_on:
+      - edge-admin
+      - mysqld
+
+  edge-dns:
+    image: icodex/edge-dns:${VERSION}
+    container_name: edge-dns
+    environment:
+      - ENDPOINTS=http://xxx.com:8001
+      - NODEID=xxx
+      - SECRET=xxx
+    ports:
+      - 53:53/udp
+    networks:
+      - goedge
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./data/edge-dns/configs:/usr/local/goedge/edge-dns/configs
+    restart: always
+    depends_on:
+      - edge-admin
+      - mysqld

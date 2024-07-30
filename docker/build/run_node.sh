@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-ROOT_DIR='/usr/local/goedge'
+. /build/set_hosts.sh
 
 function pre_config() {
     if [ ! -e ${ROOT_DIR}/edge-node/configs/api_cluster.yaml ]; then
@@ -13,8 +13,11 @@ EOF
     fi
 }
 
+ROOT_DIR='/usr/local/goedge'
+
 mkdir -p /opt/cache
 chmod 777 /opt/cache
 
+set_hosts
 pre_config
 ${ROOT_DIR}/edge-node/bin/edge-node

@@ -24,17 +24,29 @@ function install_edges() {
 
 	case "$1" in
 		"admin")
-			TAR_URL="https://dl.goedge.cn/edge/v${VERSION}/edge-admin-linux-${GOARCH}-plus-v${VERSION}.zip"
+			TAR_URL="https://static-file-global.353355.xyz/goedge/edge-admin-linux-${GOARCH}-plus-v${VERSION}.zip"
 			TAR_FILE="edge-admin-linux-${GOARCH}-plus-v${VERSION}.zip"
 
 			mv /build/run_admin.sh ${ROOT_DIR}/run.sh
 			;;
 		"node")
 			apk add --no-cache nftables
-			TAR_URL="https://dl.goedge.cn/edge-node/v${VERSION}/edge-node-linux-${GOARCH}-plus-v${VERSION}.zip"
+			TAR_URL="https://static-file-global.353355.xyz/goedge/edge-node-linux-${GOARCH}-plus-v${VERSION}.zip"
 			TAR_FILE="edge-node-linux-${GOARCH}-plus-v${VERSION}.zip"
 
 			mv /build/run_node.sh ${ROOT_DIR}/run.sh
+			;;
+		"user")
+			TAR_URL="https://static-file-global.353355.xyz/goedge/edge-user-linux-${GOARCH}-v${VERSION}.zip"
+			TAR_FILE="edge-user-linux-${GOARCH}-v${VERSION}.zip"
+
+			mv /build/run_user.sh ${ROOT_DIR}/run.sh
+			;;
+		"dns")
+			TAR_URL="https://static-file-global.353355.xyz/goedge/edge-dns-linux-${GOARCH}-v${VERSION}.zip"
+			TAR_FILE="edge-dns-linux-${GOARCH}-v${VERSION}.zip"
+
+			mv /build/run_dns.sh ${ROOT_DIR}/run.sh
 			;;
 		*)
 			echo "unknown type: ${1}"

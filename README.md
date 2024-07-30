@@ -108,6 +108,8 @@ services:
       - CLUSTERID=xxx
       - SECRET=xxx
     network_mode: host
+    cap_add:
+      - NET_ADMIN
     volumes:
       - ./data/edge-node/cache:/opt/cache
       - ./data/edge-node/configs:/usr/local/goedge/edge-node/configs
